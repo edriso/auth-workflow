@@ -10,16 +10,24 @@ const register = async (req, res) => {
     throw new CustomError.BadRequestError('Email already in use');
   }
 
-  //   // Register first user as an admin
-  //   const isFirstAccount = (await User.countDocuments({})) === 0;
-  //   const role = isFirstAccount ? 'admin' : 'user';
+  const isFirstAccount = (await User.countDocuments({})) === 0;
+  const role = isFirstAccount ? 'admin' : 'user';
 
-  const user = await User.create({ name, email, password });
+  const verificationToken = 'fakeToken';
 
-  const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role,
+    verificationToken,
+  });
 
-  res.status(201).json({ user: tokenUser });
+  // send verificationToken back only while testing in postman
+  res.status(201).json({
+    msg: 'Success! Please check your email to verify account',
+    verificationToken,
+  });
 };
 
 const login = async (req, res) => {
@@ -36,6 +44,10 @@ const login = async (req, res) => {
 
   if (!(await user.checkPassword(password))) {
     throw new CustomError.UnauthenticatedError('Invalid credentials');
+  }
+
+  if (!user.isVerified) {
+    throw new CustomError.UnauthenticatedError('Please verify you email');
   }
 
   const tokenUser = createTokenUser(user);
