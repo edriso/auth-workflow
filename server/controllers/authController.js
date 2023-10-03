@@ -27,8 +27,36 @@ const register = async (req, res) => {
   // send verificationToken back only while testing in postman
   res.status(201).json({
     msg: 'Success! Please check your email to verify account',
-    verificationToken,
   });
+};
+
+const verifyEmail = async (req, res) => {
+  const { verificationToken, email } = req.body;
+
+  if (!verificationToken || !email) {
+    throw new CustomError.BadRequestError(
+      'Missing email or verification token',
+    );
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new CustomError.NotFoundError('User not found');
+  }
+  if (user.isVerified) {
+    throw new CustomError.ConflictError('User is already verified');
+  }
+  if (user.verificationToken !== verificationToken) {
+    throw new CustomError.UnauthenticatedError('Verification failed');
+  }
+
+  user.isVerified = true;
+  user.verifiedAt = Date.now();
+  user.verificationToken = undefined;
+  await user.save();
+
+  res.json({ msg: 'Email verified successfully' });
 };
 
 const login = async (req, res) => {
@@ -67,6 +95,7 @@ const logout = async (req, res) => {
 
 module.exports = {
   register,
+  verifyEmail,
   login,
   logout,
 };
