@@ -28,6 +28,11 @@ const register = async (req, res) => {
     verificationToken,
   });
 
+  // we could get FRONTEND_BASE_URL from req
+  // const forwardedProtocol = req.get('x-forwarded-proto'); // eg., http | https
+  // const forwardedHost = req.get('x-forwarded-host'); // eg., localhost:3000
+  // req.get('origin') is tricky when using proxy
+  // req.get('host) // localhost:5000
   await sendVerificationEmail({
     name: user.name,
     email: user.email,
