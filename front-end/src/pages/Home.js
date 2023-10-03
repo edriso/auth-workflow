@@ -15,14 +15,16 @@ function Home() {
             Workflow
           </h2>
           <p>
-            I'm baby viral enamel pin chartreuse cliche retro af selfies kinfolk
-            photo booth plaid jianbing actually squid 3 wolf moon lumbersexual.
-            Hell of humblebrag gluten-free lo-fi man braid leggings.
+            Gummi bears dessert sesame snaps cake lollipop sesame snaps.
+            Liquorice croissant pastry biscuit lollipop caramels. Bear claw
+            liquorice danish lemon drops powder marshmallow lollipop cake
+            marshmallow. Fruitcake danish pie gingerbread sweet. Pudding ice
+            cream powder tootsie roll shortbread.
           </p>
           <p>
-            Cloud bread kale chips wayfarers deep v chicharrones leggings
-            fingerstache actually blog cliche four dollar toast. Sriracha ugh
-            kickstarter, next level la croix butcher lomo.
+            Jujubes toffee cheesecake tootsie roll tart cupcake soufflé cupcake.
+            Macaroon tootsie roll candy cake cookie cookie marshmallow. Jelly
+            gummies chupa chups apple pie jelly-o cookie gummi bears liquorice.
           </p>
 
           <Link to='/login' className='btn'>
