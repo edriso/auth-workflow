@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const User = require('../models/User');
+const Token = require('../models/Token');
 const CustomError = require('../errors');
 const {
   attachCookiesToResponse,
@@ -31,7 +32,7 @@ const register = async (req, res) => {
   // we could get FRONTEND_BASE_URL from req
   // const forwardedProtocol = req.get('x-forwarded-proto'); // eg., http | https
   // const forwardedHost = req.get('x-forwarded-host'); // eg., localhost:3000
-  // req.get('origin') is tricky when using proxy
+  //// req.get('origin') is tricky when using proxy
   // req.get('host) // localhost:5000
   await sendVerificationEmail({
     name: user.name,
@@ -85,7 +86,8 @@ const login = async (req, res) => {
     throw new CustomError.UnauthenticatedError('Invalid credentials');
   }
 
-  if (!(await user.checkPassword(password))) {
+  const isPasswordCorrect = await user.checkPassword(password);
+  if (!isPasswordCorrect) {
     throw new CustomError.UnauthenticatedError('Invalid credentials');
   }
 
@@ -94,7 +96,27 @@ const login = async (req, res) => {
   }
 
   const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
+
+  // create refresh token
+  let refreshToken = '';
+  // check for existing token
+
+  refreshToken = crypto.randomBytes(40).toString('hex');
+  // two ways to access something from the headers:
+  // req.headers['something'] || req.get('something')
+  const userAgent = req.headers['user-agent'];
+  const ip = req.ip;
+
+  const userToken = {
+    refreshToken,
+    ip,
+    userAgent,
+    user: user._id,
+  };
+
+  await Token.create(userToken);
+
+  attachCookiesToResponse({ res, user: tokenUser, refreshToken });
 
   res.json({ user: tokenUser });
 };
