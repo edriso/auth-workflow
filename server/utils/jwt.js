@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const createJWT = ({ payload }) => {
-  // expiresIn was deleted as we'll control the token through refreshToken
+  // expiresIn was removed as we'll control the token through refreshToken cookie
   const token = jwt.sign(payload, process.env.JWT_SECRET);
   return token;
 };
