@@ -100,24 +100,34 @@ const login = async (req, res) => {
   // create refresh token
   let refreshToken = '';
   // check for existing token
+  const existingToken = await Token.findOne({ user: user._id });
+
+  if (existingToken) {
+    const { isValid } = existingToken;
+    if (!isValid) {
+      throw new CustomError.UnauthenticatedError('Invalid credentials');
+    }
+
+    refreshToken = existingToken.refreshToken;
+    attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+    res.json({ user: tokenUser });
+    return;
+  }
 
   refreshToken = crypto.randomBytes(40).toString('hex');
   // two ways to access something from the headers:
   // req.headers['something'] || req.get('something')
   const userAgent = req.headers['user-agent'];
   const ip = req.ip;
-
   const userToken = {
     refreshToken,
     ip,
     userAgent,
     user: user._id,
   };
-
   await Token.create(userToken);
 
   attachCookiesToResponse({ res, user: tokenUser, refreshToken });
-
   res.json({ user: tokenUser });
 };
 
