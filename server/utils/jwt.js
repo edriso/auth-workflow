@@ -18,12 +18,13 @@ const attachCookiesToResponse = ({ res, user, refreshToken }) => {
     signed: true,
     maxAge: 1000 * 60 * 15, // Cookie will expire after 15 min
   });
-  const oneDay = 1000 * 60 * 60 * 24;
+
+  const expiresIn30Days = 1000 * 60 * 60 * 24 * 30;
   res.cookie('refreshToken', refreshTokenJWT, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     signed: true,
-    expires: new Date(Date.now() + oneDay),
+    expires: new Date(Date.now() + expiresIn30Days),
   });
 };
 
