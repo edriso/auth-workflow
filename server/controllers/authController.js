@@ -146,9 +146,19 @@ const logout = async (req, res) => {
   res.status(204).json({ msg: 'Logged out!' });
 };
 
+const forgotPassword = async (req, res) => {
+  res.json('forgotPassword');
+};
+
+const resetPassword = async (req, res) => {
+  res.json('resetPassword');
+};
+
 module.exports = {
   register,
   verifyEmail,
   login,
   logout,
+  forgotPassword,
+  resetPassword,
 };
