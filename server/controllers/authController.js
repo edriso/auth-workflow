@@ -7,6 +7,7 @@ const {
   createTokenUser,
   sendVerificationEmail,
   sendResetPasswordEmail,
+  createHash,
 } = require('../utils');
 
 const register = async (req, res) => {
@@ -168,7 +169,7 @@ const forgotPassword = async (req, res) => {
     const tenMinutes = 1000 * 60 * 10; // in milliseconds
     const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);
 
-    user.passwordToken = passwordToken;
+    user.passwordToken = createHash(passwordToken);
     user.passwordTokenExpirationDate = passwordTokenExpirationDate;
     await user.save();
   }
@@ -191,7 +192,9 @@ const resetPassword = async (req, res) => {
     const currentDate = new Date();
 
     if (
-      user.passwordToken === token &&
+      // Remember: hashing is a one way street
+      // that's why we compare the hashed(token) with the hashed one in db
+      user.passwordToken === createHash(token) &&
       user.passwordTokenExpirationDate > currentDate
     ) {
       user.password = password;
