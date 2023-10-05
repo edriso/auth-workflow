@@ -130,11 +130,20 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.cookie('token', 'logout', {
+  await Token.findOneAndDelete({
+    user: req.user.userId,
+  });
+
+  res.cookie('accessToken', 'logout', {
     httpOnly: true,
     expires: new Date(Date.now()),
   });
-  res.json({ msg: 'Logged out!' });
+  res.cookie('refreshToken', 'logout', {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+
+  res.status(204).json({ msg: 'Logged out!' });
 };
 
 module.exports = {
