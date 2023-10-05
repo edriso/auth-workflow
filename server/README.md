@@ -16,11 +16,10 @@ Designed with simplicity, security, and efficiency in mind, this API invites you
   - [Documentation](#documentation)
     - [API Documentation](#api-documentation)
     - [Postman Documentation](#postman-documentation)
-  - [Useful Takeaways](#useful-takeaways)
 
 ## Introduction
 
-This Express.js application serves as the backend for an e-commerce platform, credits to John Smilga for the valuable insights and knowledge shared in his node.js course. The application allows users to register, log in, browse products, leave reviews, and create orders. The API is designed to be secure, scalable, and easy to use.
+This Express.js application serves as the backend for an e-commerce platform, credits to John Smilga for the valuable insights and knowledge shared in his node.js course. The application allows users to register, log in, log out, verify email, reset password, browse products, leave reviews, and create orders. The API is designed to be secure, scalable, and easy to use.
 
 ## Features
 
@@ -29,6 +28,7 @@ This Express.js application serves as the backend for an e-commerce platform, cr
 - File upload functionality for product images.
 - Security measures, including rate limiting, helmet protection, and data sanitization.
 - Error handling and logging for improved debugging.
+- Adding auth workflow
 
 ## Installation
 
@@ -53,7 +53,9 @@ The server will start on the specified port (or default to 5000 if not changed i
 
   - `POST /api/v1/auth/register` - Register a new user.
   - `POST /api/v1/auth/login` - User login.
-  - `GET /api/v1/auth/logout` - User logout.
+  - `DELETE /api/v1/auth/logout` - User logout.
+  - `POST /api/v1/auth/forgot-password` - Forgot Password.
+  - `POST /api/v1/auth/reset` - Reset Password.
 
 - **Users:**
 
@@ -110,30 +112,3 @@ You can access the API documentation by visiting the root route of the applicati
 To enhance usability, the API endpoints have been documented in Postman.
 
 You can find the collection in the `ecommerce-api.postman_collection` file. Import this collection into your Postman application to interactively explore the available endpoints.
-
-## Useful Takeaways
-
-- We've included a `utils` folder for easy integration into other projects.
-
-- Consider using an object for function arguments (as seen in the `createJWT` function in `jwt.js`) to eliminate concerns about argument order.
-
-- To register the first user as an admin:
-
-  ```javascript
-  const isFirstAccount = (await User.countDocuments({})) === 0;
-  const role = isFirstAccount ? 'admin' : 'user';
-  ```
-
-- **Sending the Token vs Attaching the Token to a Cookie:**
-
-  - When sending the token in the response:
-    - The frontend manages token storage, typically saving it to `localStorage`.
-  - When attaching the token to a cookie from the backend:
-    - No frontend handling is required.
-    - Enhanced security as client-side JavaScript cannot access the token due to the `httpOnly` option.
-    - Be mindful of the cookie's maximum size.
-    - By default, the cookie is sent back to its origin server. If your frontend and backend are on different servers, ensure proper setup, like using a proxy in development (e.g., `"proxy": "server-url"`) or redirects in production.
-
-- **Helpful Resource for DocGen on Windows:**
-
-  - This article provides useful insights into using DocGen on Windows for generating Postman API documentation: [Using DocGen on Windows to Generate Postman API Documentation](https://sedx876.medium.com/using-docgen-on-windows-to-generate-postman-api-documentation-c4fc1724fef2)
