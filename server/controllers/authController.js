@@ -6,6 +6,7 @@ const {
   attachCookiesToResponse,
   createTokenUser,
   sendVerificationEmail,
+  sendResetPasswordEmail,
 } = require('../utils');
 
 const register = async (req, res) => {
@@ -147,7 +148,34 @@ const logout = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  res.json('forgotPassword');
+  const { email } = req.body;
+
+  if (!email) {
+    throw new CustomError.BadRequestError('Please provide valid email');
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const passwordToken = crypto.randomBytes(70).toString('hex');
+
+    await sendResetPasswordEmail({
+      name: user.name,
+      email: user.email,
+      token: passwordToken,
+    });
+
+    const tenMinutes = 1000 * 60 * 10; // in milliseconds
+    const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);
+
+    user.passwordToken = passwordToken;
+    user.passwordTokenExpirationDate = passwordTokenExpirationDate;
+    await user.save();
+  }
+
+  // we send that msg anyway incase the user exists or not, to make our app more secure
+  // attackers may know what emails I have in my db, if we didn't do it that way
+  res.json({ msg: 'Please check your email for reset password link' });
 };
 
 const resetPassword = async (req, res) => {
