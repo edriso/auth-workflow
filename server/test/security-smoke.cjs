@@ -83,7 +83,7 @@ const fs = require("node:fs");
       assert.equal(typeof sdk.uploader.upload, "function");
       assert.match(
         sdk.url("fixture", { cloud_name: "demo", secure: true }),
-        /^https:\/\/res.cloudinary.com\/demo\//,
+        /^https:\/\/res\.cloudinary\.com\/demo\//,
       );
     }
     console.log(
