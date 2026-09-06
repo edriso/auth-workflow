@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "test:smoke": "node test/security-smoke.cjs"
   },
   "author": "",
   "license": "ISC",
@@ -22,15 +23,18 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.2",
-    "nodemailer": "^6.9.5",
+    "nodemailer": "^10.0.0",
     "validator": "^13.11.0",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "morgan": "^1.10.0",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.1.14"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=22"
+  },
+  "overrides": {
+    "qs": "^6.16.0"
   }
 }
